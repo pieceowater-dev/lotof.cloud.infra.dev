@@ -1,7 +1,6 @@
 # -------------------BACKEND--------------------
-
 locals {
-  tfstate_bucket_name = "pcwt-terraform-state-bucket"
+  providerRegion = "eu-north-1"
 }
 
 terraform {
@@ -15,7 +14,7 @@ terraform {
 # ------------------Provider--------------------
 
 provider "aws" {
-  region = var.ProviderRegion
+  region = local.providerRegion
 }
 
 # ---------------------Tools---------------------
@@ -23,4 +22,11 @@ provider "aws" {
 resource "random_string" "suffix" {
   length  = 8
   special = false
+}
+
+# ---------------------DEVENV--------------------
+
+module "devenv" {
+  source        = "./DEV_ENV"
+  providerRegion = local.providerRegion
 }
