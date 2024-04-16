@@ -1,5 +1,37 @@
 ## pieceformation
 
+
+### AWS Configuration
+
+Before using Terraform to manage your infrastructure, make sure you have configured your AWS credentials. If you haven't done so already, you can set up your AWS CLI by running:
+
+```bash
+aws configure
+```
+
+Follow the prompts to enter your Access Key ID, Secret Access Key, default region, and output format.
+
+### Terraform Initialization
+
+Once your AWS credentials are configured, navigate to your Terraform project directory and initialize Terraform by running:
+
+```bash
+terraform init
+```
+
+This command initializes your working directory and downloads any necessary plugins.
+
+### Terraform Apply
+
+After initialization, apply your Terraform configuration to create the resources defined in your Terraform files:
+
+```bash
+terraform apply -auto-approve
+```
+
+Terraform will generate an execution plan and prompt you to confirm before making any changes. Use the `-auto-approve` flag to automatically approve the plan and apply changes without user input.
+
+
 ### SSH to Development Server
 
 To SSH into your development server, follow these steps:
