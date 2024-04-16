@@ -93,6 +93,13 @@ resource "aws_instance" "vm" {
   
   associate_public_ip_address = true
 
+  lifecycle {
+    ignore_changes = [
+      associate_public_ip_address,
+      security_groups
+    ]
+  }
+
   user_data = <<-EOF
               #!/bin/bash
               yum update -y
