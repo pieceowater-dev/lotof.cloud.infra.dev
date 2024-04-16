@@ -4,9 +4,9 @@ variable "providerRegion" {}
 # ------------------VPC--------------------
 
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-  enable_dns_support = true
-  enable_dns_hostnames = true
+  cidr_block            = "10.0.0.0/16"
+  enable_dns_support    = true
+  enable_dns_hostnames  = true
 
   tags = {
     Name = "DevVPC"
@@ -16,8 +16,8 @@ resource "aws_vpc" "main" {
 # ------------------Subnet--------------------
 
 resource "aws_subnet" "subnet1" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "${var.providerRegion}a"
 
   tags = {
@@ -90,6 +90,8 @@ resource "aws_instance" "vm" {
   subnet_id     = aws_subnet.subnet1.id
   key_name      = "pieceowater-dev-serv"  # create this key first!
   security_groups = [ aws_security_group.sg.id ]
+  
+  associate_public_ip_address = true
 
   user_data = <<-EOF
               #!/bin/bash
