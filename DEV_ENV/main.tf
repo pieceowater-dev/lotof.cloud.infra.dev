@@ -100,6 +100,7 @@ resource "aws_security_group" "sg" {
 
 # ------------------EC2 Instance--------------------
 resource "aws_instance" "vm" {
+  count         = 2
   ami           = "ami-01dad638e8f31ab9a"
   instance_type = "t3.micro"
   subnet_id     = aws_subnet.subnet1.id
@@ -122,9 +123,10 @@ resource "aws_instance" "vm" {
               yum install -y docker
               systemctl start docker
               systemctl enable docker
+              yum install -y httpd certbot
               EOF
 
   tags = {
-    Name = "DevServer"
+    Name = "DevServer-${count.index + 1}"
   }
 }
