@@ -123,7 +123,9 @@ resource "aws_instance" "vm" {
               yum install -y docker
               systemctl start docker
               systemctl enable docker
-              yum install -y httpd certbot
+              yum install -y httpd certbot python3-certbot-apache
+              sudo systemctl enable httpd
+              sudo systemctl start httpd
               EOF
 
   tags = {
