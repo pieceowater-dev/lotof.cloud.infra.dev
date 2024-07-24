@@ -100,7 +100,7 @@ resource "aws_security_group" "sg" {
 
 # ------------------EC2 Instance--------------------
 resource "aws_instance" "vm" {
-  count         = 2
+  count         = 1
   ami           = "ami-01dad638e8f31ab9a"
   instance_type = "t3.micro"
   subnet_id     = aws_subnet.subnet1.id
@@ -109,6 +109,26 @@ resource "aws_instance" "vm" {
   
   associate_public_ip_address = true
 
+  root_block_device {
+    volume_type           = "gp3"
+    volume_size           = 32
+    delete_on_termination = true
+    iops                  = 3000
+    throughput            = 125
+  }
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_put_response_hop_limit = 2
+    http_tokens                 = "required"
+  }
+
+  private_dns_name_options {
+    hostname_type                = "ip-name"
+    enable_resource_name_dns_a_record = true
+    enable_resource_name_dns_aaaa_record = false
+  }
+
   lifecycle {
     ignore_changes = [
       associate_public_ip_address,
@@ -116,17 +136,17 @@ resource "aws_instance" "vm" {
     ]
   }
 
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y vim
-              yum install -y docker
-              systemctl start docker
-              systemctl enable docker
-              yum install -y httpd certbot python3-certbot-apache
-              sudo systemctl enable httpd
-              sudo systemctl start httpd
-              EOF
+  # user_data = <<-EOF
+  #             #!/bin/bash
+  #             yum update -y
+  #             yum install -y vim
+  #             yum install -y docker
+  #             systemctl start docker
+  #             systemctl enable docker
+  #             yum install -y httpd certbot python3-certbot-apache
+  #             sudo systemctl enable httpd
+  #             sudo systemctl start httpd
+  #             EOF
 
   tags = {
     Name = "DevServer-${count.index + 1}"
