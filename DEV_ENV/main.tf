@@ -2,7 +2,6 @@
 variable "providerRegion" {}
 
 # ------------------VPC--------------------
-
 resource "aws_vpc" "main" {
   cidr_block            = "10.0.0.0/16"
   enable_dns_support    = true
@@ -14,7 +13,6 @@ resource "aws_vpc" "main" {
 }
 
 # ------------------Subnet--------------------
-
 resource "aws_subnet" "subnet1" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.1.0/24"
@@ -26,7 +24,6 @@ resource "aws_subnet" "subnet1" {
 }
 
 # ------------------Internet Gateway--------------------
-
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
 
@@ -36,7 +33,6 @@ resource "aws_internet_gateway" "gw" {
 }
 
 # ------------------Route Table--------------------
-
 resource "aws_route_table" "rt" {
   vpc_id = aws_vpc.main.id
 
@@ -50,19 +46,15 @@ resource "aws_route_table" "rt" {
   }
 }
 
-# ------------------Route Table Association--------------------
-
 resource "aws_route_table_association" "subnet_assoc" {
   subnet_id      = aws_subnet.subnet1.id
   route_table_id = aws_route_table.rt.id
 }
 
 # ------------------Security Group--------------------
-
 resource "aws_security_group" "sg" {
   vpc_id = aws_vpc.main.id
 
-  // Allow SSH inbound from your IP address (replace with your IP)
   ingress {
     from_port   = 22
     to_port     = 22
@@ -84,7 +76,6 @@ resource "aws_security_group" "sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  // Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
@@ -103,9 +94,9 @@ resource "aws_instance" "vm" {
   ami           = "ami-01dad638e8f31ab9a"
   instance_type = "t3.micro"
   subnet_id     = aws_subnet.subnet1.id
-  key_name      = "pieceowater-dev-serv"  # create this key first!
-  security_groups = [ aws_security_group.sg.id ]
-  
+  key_name      = "pieceowater-dev-serv"  # Ensure this key exists!
+  security_groups = [aws_security_group.sg.id]
+
   associate_public_ip_address = true
 
   root_block_device {
@@ -123,7 +114,7 @@ resource "aws_instance" "vm" {
   }
 
   private_dns_name_options {
-    hostname_type                = "ip-name"
+    hostname_type                     = "ip-name"
     enable_resource_name_dns_a_record = true
     enable_resource_name_dns_aaaa_record = false
   }
@@ -143,7 +134,6 @@ resource "aws_instance" "vm" {
 # ------------------Elastic IP--------------------
 resource "aws_eip" "elastic_ip" {}
 
-# ------------------Elastic IP Association--------------------
 resource "aws_eip_association" "eip_assoc" {
   instance_id   = aws_instance.vm[0].id
   allocation_id = aws_eip.elastic_ip.id
