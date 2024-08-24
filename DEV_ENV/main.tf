@@ -77,7 +77,6 @@ resource "aws_security_group" "sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-
   ingress {
     from_port   = 80
     to_port     = 80
@@ -136,19 +135,16 @@ resource "aws_instance" "vm" {
     ]
   }
 
-  # user_data = <<-EOF
-  #             #!/bin/bash
-  #             yum update -y
-  #             yum install -y vim
-  #             yum install -y docker
-  #             systemctl start docker
-  #             systemctl enable docker
-  #             yum install -y httpd certbot python3-certbot-apache
-  #             sudo systemctl enable httpd
-  #             sudo systemctl start httpd
-  #             EOF
-
   tags = {
     Name = "DevServer-${count.index + 1}"
   }
+}
+
+# ------------------Elastic IP--------------------
+resource "aws_eip" "elastic_ip" {}
+
+# ------------------Elastic IP Association--------------------
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.vm[0].id
+  allocation_id = aws_eip.elastic_ip.id
 }
